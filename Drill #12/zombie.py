@@ -143,6 +143,15 @@ class Zombie:
         else:
             return BehaviorTree.FAIL
 
+    def run_away_from_boy(self):
+        self.state = 'Walk'
+        angle = math.atan2(self.y - common.boy.y, self.x - common.boy.x)
+        distance = RUN_SPEED_PPS * game_framework.frame_time
+        self.dir = angle
+        self.x += distance * math.cos(angle)
+        self.y += distance * math.sin(angle)
+        return BehaviorTree.RUNNING
+
     def build_behavior_tree(self):
         a1 = Action('Set target location', self.set_target_location, 1000, 1000)
         a2 = Action('Move to', self.move_to, 0.5)
