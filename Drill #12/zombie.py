@@ -176,3 +176,4 @@ class Zombie:
 
         root = chase_or_run_or_wander = Selector('조건 만족 시 추적/도망 아니면 방황', chase_boy, runaway_boy, wander)
         self.bt = BehaviorTree(root)
+
