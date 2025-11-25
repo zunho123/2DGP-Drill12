@@ -155,10 +155,6 @@ class Zombie:
         root = wander = Sequence('Wander', a3, a2)
         a4 = Action('소년한테 접근', self.move_to_boy)
         root = wander_or_chase = Sequence('Wander Or Chase', a3, a4)
-        #c1 = Condition('소년이 근처에 있는가?', self.if_boy_nearby, 7)
-        #
-        #root = chase_boy = Sequence('소년이 가까이 있으면 추적', c1, a4)
-
-        # root = chase_or_wander = Selector('소년이 가까이 있으면 추적 아니면 방황', chase_boy, wander)
+       
 
         self.bt = BehaviorTree(root)
