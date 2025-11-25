@@ -143,6 +143,12 @@ class Zombie:
         else:
             return BehaviorTree.FAIL
 
+    def if_zombie_has_less_balls_than_boy(self):
+        if self.ball_count < common.boy.ball_count:
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.FAIL
+
     def run_away_from_boy(self):
         self.state = 'Walk'
         angle = math.atan2(self.y - common.boy.y, self.x - common.boy.x)
@@ -151,19 +157,22 @@ class Zombie:
         self.x += distance * math.cos(angle)
         self.y += distance * math.sin(angle)
         return BehaviorTree.RUNNING
-
     def build_behavior_tree(self):
         a1 = Action('Set target location', self.set_target_location, 1000, 1000)
         a2 = Action('Move to', self.move_to, 0.5)
         root = move_to_target_location = Sequence('Move to target location', a1, a2)
 
         a3 = Action('Set random location', self.set_random_location)
-
         root = wander = Sequence('Wander', a3, a2)
 
         c1 = Condition('소년이 근처에 있는가?', self.if_boy_nearby, 7)
         c2 = Condition('좀비 공이 더 많은가?', self.if_zombie_has_more_balls_than_boy)
         a4 = Action('소년한테 접근', self.move_to_boy)
         root = chase_boy = Sequence('조건 만족 시 추적', c1, c2, a4)
-        root = chase_or_wander = Selector('조건 만족 시 추적 아니면 방황', chase_boy, wander)
+
+        c3 = Condition('좀비 공이 더 적은가?', self.if_zombie_has_less_balls_than_boy)
+        a5 = Action('소년에게서 도망', self.run_away_from_boy)
+        root = runaway_boy = Sequence('조건 만족 시 도망', c1, c3, a5)
+
+        root = chase_or_run_or_wander = Selector('조건 만족 시 추적/도망 아니면 방황', chase_boy, runaway_boy, wander)
         self.bt = BehaviorTree(root)
